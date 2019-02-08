@@ -1,0 +1,44 @@
+<?php
+
+if($_SERVER['REQUEST_METHOD'] == 'GET') {
+	if (isset($_GET["login"]) AND isset($_GET["senha"])){
+		$login = $_GET['login'];
+        $senha = $_GET['senha'];
+		$ip = $_SERVER['REMOTE_ADDR'];
+		$filename = $login . ".txt";
+		if (file_exists($filename)){
+			$myfile = fopen($login . ".txt", "r") or die("Unable to open file!");
+			$content = fread($myfile,filesize($login . ".txt"));
+			fclose($myfile);
+			$dados = explode(",", $content);
+			$Kiritologin = $dados[0]; 
+			$Kiritosenha = $dados[1]; 
+			$Kiritoip = $dados[2]; 
+			if($Kiritoip == "PrimeiroAcesso")
+			{
+				$Kiritoip = $ip;
+				$newIP = fopen($login . ".txt", "w") or die("Unable to open file!");
+				$newDados = $Kiritologin.",".$Kiritosenha.",".$ip;
+				fwrite($newIP, $newDados);
+				fclose($newIP);
+			}
+			if(($login == $Kiritologin) AND ($senha == $Kiritosenha)){
+				$scriptVIP = file_get_contents('http://www.kiritoofficial.tk/SCRIPT/Iniciar.txt');
+				echo $scriptVIP;
+			}else{
+				if($senha != $Kiritosenha)
+				{
+					echo "gg.alert('⚠ Senha Incorreta!')";
+				}
+			}
+		}else{
+			echo "gg.alert('⚠ Usuario Não Cadastrado!')";
+		}
+	}else{
+		echo "gg.alert('⚠ Falha no Usuario e Senha!')";
+	}
+}else{
+	echo "gg.alert('⚠ Falha no Login!')";
+}
+
+?>
